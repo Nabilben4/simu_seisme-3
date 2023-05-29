@@ -84,12 +84,12 @@ nom = st.text_input('Veuillez nommer votre essai')
 st.write('nom de votre essai :  ', nom)
 
 #--------------commande du moteur latérale------------------
-puissance_lat = st.slider("Puissance lattérale du seisme en %",min_value=1,max_value=100,value=1,step=1)
-rc_lat=int(puissance_lat*1023//100)
+puissance_lat = st.slider("Puissance lattérale du seisme en %",min_value=0,max_value=12,value=1,step=0.1)
+rc_lat=int(puissance_lat*1023//12)
 send_message(rc_lat,"test/pwm_lat")
 #--------------commande du moteur longitudinale------------------
-puissance_long = st.slider("Puissance longitudinuale du seisme en %",min_value=1,max_value=100,value=1,step=1)
-rc_long=int(puissance_long*1023//100)
+puissance_long = st.slider("Puissance longitudinuale du seisme en %",min_value=0,max_value=12,value=1,step=0.1)
+rc_long=int(puissance_long*1023//12)
 send_message(rc_long,"test/pwm_long")
 
 duree=0
