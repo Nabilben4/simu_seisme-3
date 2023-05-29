@@ -84,34 +84,30 @@ nom = st.text_input('Veuillez nommer votre essai')
 st.write('nom de votre essai :  ', nom)
 
 #--------------commande du moteur latérale------------------
-puissance_lat = st.slider("Puissance lattérale du seisme en %",min_value=0,max_value=12,value=1,step=0.1)
-rc_lat=int(puissance_lat*1023//12)
-send_message(rc_lat,"test/pwm_lat")
-#--------------commande du moteur longitudinale------------------
-puissance_long = st.slider("Puissance longitudinuale du seisme en %",min_value=0,max_value=12,value=1,step=0.1)
-rc_long=int(puissance_long*1023//12)
-send_message(rc_long,"test/pwm_long")
+puissance_lat = st.slider("Puissance lattérale du seisme en %",min_value=0.0,max_value=12.0,value=0.0,step=0.1)
+rc_lat=int(330+(puissance_lat*693/12))
 
-duree=0
-now=time.time()  
+#--------------commande du moteur longitudinale------------------
+puissance_long = st.slider("Puissance longitudinuale du seisme en %",min_value=0.0,max_value=12.0,value=0.0,step=0.1)
+rc_long=int(330+(puissance_long*693//12))
+
 duree_enr = st.number_input("Durée de l'enregistrement en secondes",min_value=1,max_value=10,value=1,step=1)
 enr=st.button("enregistrer")
 text = "enregistrement en cours. Please wait."
 my_bar = st.progress(0, text=text)   
-
-while duree<duree_enr and enr:
-    my_bar.progress(int(duree/duree_enr*100), text=text)
-    mqtt_client.loop()       
-    duree=(time.time()-now)
+if enr:
+    duree=0
+    now=time.time()
+    send_message(rc_lat,"test/pwm_lat")
+    send_message(rc_long,"test/pwm_long")  
+    while duree<duree_enr :        
+        my_bar.progress(int(duree/duree_enr*100), text=text)
+        mqtt_client.loop()       
+        duree=(time.time()-now)
+    
 send_message(0,"test/pwm_lat")
 send_message(0,"test/pwm_long")
 mqtt_client.disconnect()
 df = pd.DataFrame(list(zip(gyro_x,gyro_y,gyro_z,accel_x,accel_y,accel_z,temp)), columns = ['gyro_x','gyro_y',"gyro_z","accel_x","accel_y","accel_z","temp"])
 st.write(df)
 st.write("enregistrement terminé")
-#ext = ".db"
-#seisme = nom + ext
-#conn = sqlite3.connect(seisme)
-#df.to_sql(seisme,conn,if_exists='replace')
-#st.write("L'enregistrement des données se trouve dans : ",seisme)
-#conn.close()
