@@ -1,5 +1,5 @@
 import streamlit as st
-import mysql.connector
+
 import paho.mqtt.client as mqtt
 #import sqlite3
 import time
