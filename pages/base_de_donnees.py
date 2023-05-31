@@ -1,5 +1,5 @@
 import streamlit as st
-
+import mysql.connector
 import paho.mqtt.client as mqtt
 #import sqlite3
 import time
@@ -42,12 +42,12 @@ accel_x= []
 accel_y= []
 accel_z= []
 temp=[]
-#--------------envoyer le rapport cyclique ------------------
+#--------------fonction permettant d'envoyer un message au broker mqtt ------------------
 def send_message(rap_cyc,topic):
     message = str(rap_cyc)
     mqtt_client.publish(topic,message)
 
-# fonction permettant de recevoir les messages et de les stocker
+# fonction permettant de recevoir les messages envoyer par le broker mqtt et de les stocker
 def on_message(client,userdata,message):
 #----------gyroscope axe x------------
     if message.topic == mqtt_topic1 :
@@ -77,7 +77,17 @@ def on_message(client,userdata,message):
     if message.topic == mqtt_topic7 :
         new_data = message.payload.decode("utf-8")
         temp.append(float(new_data))   
-   
+
+#----------Fonction permettant la connexion à la base de données MySql-------
+#def create_connection():
+#    connection = mysql.connector.connect(
+#        host='localhost',
+#        user='root',
+#        password='sdf',
+#        database='donnee_seisme'
+#   )
+#    return connection
+
 mqtt_client.on_message = on_message  
 st.title("Enregistrement des données sismiques d'un tremblement de terre")
 nom = st.text_input('Veuillez nommer votre essai')
